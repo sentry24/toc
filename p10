@@ -1,0 +1,48 @@
+#include <iostream>
+#include <string>
+using namespace std;
+string incrementBinaryTM(string tape) {
+tape += "_"; // add blank to right
+int head = 0;
+string state = "q0";
+// Step 1: move to rightmost symbol
+while (state != "q_accept") {
+char symbol = tape[head];
+if (state == "q0") {
+if (symbol == '0' || symbol == '1') {
+head++;
+} else if (symbol == '_') {
+head--; // move to last bit
+state = "q1";
+} else {
+return "ERROR";
+}
+}
+else if (state == "q1") {
+if (symbol == '1') {
+tape[head] = '0'; // carry continues
+head--;
+} else if (symbol == '0') {
+tape[head] = '1'; // carry done
+state = "q_accept";
+} else if (symbol == '_') {
+tape.insert(tape.begin(), '1'); // overflow new bit
+state = "q_accept";
+} else {
+return "ERROR";
+}
+}
+}
+// Clean result (remove trailing blanks)
+while (!tape.empty() && tape[tape.size()-1] == '_')
+tape.erase(tape.end()-1);
+return tape;
+}
+int main() {
+string input;
+cout << "Enter a binary number: ";
+cin >> input;
+string output = incrementBinaryTM(input);
+cout << "After increment: " << output << endl;
+return 0;
+}
